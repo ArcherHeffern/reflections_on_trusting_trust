@@ -1,54 +1,28 @@
 CFLAGS=-std=c11 -g -fno-common -Wall -Wno-switch
+INC=-I./include/
 
 SRCS=$(wildcard *.c)
 OBJS=$(SRCS:.c=.o)
 
-TEST_SRCS=$(wildcard test/*.c)
-TESTS=$(TEST_SRCS:.c=.exe)
+# Default CC to system GCC
+CC=gcc
 
-# Stage 1
-
+# Main target using default gcc
 gcc: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
 
-bad-gcc: CC=../../gcc
+# Custom GCC target
+bad-gcc: CC=../../bad-gcc
 bad-gcc: $(OBJS)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
 
-$(OBJS): chibicc.h
+# Pattern rule for object files
+$(OBJS): %.o : %.c chibicc.h
+	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
-test/%.exe: chibicc test/%.c
-	./chibicc -Iinclude -Itest -c -o test/$*.o test/$*.c
-	$(CC) -pthread -o $@ test/$*.o -xc test/common
-
-test: $(TESTS)
-	for i in $^; do echo $$i; ./$$i || exit 1; echo; done
-	test/driver.sh ./chibicc
-
-test-all: test test-stage2
-
-# Stage 2
-
-stage2/chibicc: $(OBJS:%=stage2/%)
-	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
-
-stage2/%.o: chibicc %.c
-	mkdir -p stage2/test
-	./chibicc -c -o $(@D)/$*.o $*.c
-
-stage2/test/%.exe: stage2/chibicc test/%.c
-	mkdir -p stage2/test
-	./stage2/chibicc -Iinclude -Itest -c -o stage2/test/$*.o test/$*.c
-	$(CC) -pthread -o $@ stage2/test/$*.o -xc test/common
-
-test-stage2: $(TESTS:test/%=stage2/test/%)
-	for i in $^; do echo $$i; ./$$i || exit 1; echo; done
-	test/driver.sh ./stage2/chibicc
-
-# Misc.
-
+# Clean rule
 clean:
-	rm -rf gcc chibicc tmp* $(TESTS) test/*.s test/*.exe stage2
-	find * -type f '(' -name '*~' -o -name '*.o' ')' -exec rm {} ';'
+	rm -rf gcc bad-gcc $(OBJS)
+	find * -type f '(' -name '*~' ')' -exec rm {} ';'
 
-.PHONY: test clean test-stage2
+.PHONY: clean gcc bad-gcc

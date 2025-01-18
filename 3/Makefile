@@ -5,11 +5,10 @@ OBJS=$(SRCS:.c=.o)
 
 TEST_SRCS=$(wildcard test/*.c)
 TESTS=$(TEST_SRCS:.c=.exe)
-CC=./ccomp
 
 # Stage 1
 
-chibicc: $(OBJS)
+gcc: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(OBJS): chibicc.h

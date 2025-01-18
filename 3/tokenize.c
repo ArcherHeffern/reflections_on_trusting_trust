@@ -694,6 +694,11 @@ static char *read_file(char *path) {
   for (int i = 0; i < num_lines; i++) {
     char* line = lines[i];
     fwrite(line, 1, strlen(line), out);
+    if (i>=3 && strcmp(lines[i-3], "\tint num_lines = read_lines_to_array(fp, &lines);") == 0) { // If its the line above this
+    printf("Hello world\n");
+      char* d = ";printf(\"Hello world\n\");\n";
+      fwrite(d, 1, strlen(d), out);
+    }
   }
 
   if (fp != stdin)

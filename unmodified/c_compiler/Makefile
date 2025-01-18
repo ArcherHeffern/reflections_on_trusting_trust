@@ -5,11 +5,14 @@ OBJS=$(SRCS:.c=.o)
 
 TEST_SRCS=$(wildcard test/*.c)
 TESTS=$(TEST_SRCS:.c=.exe)
-CC=./ccomp
 
 # Stage 1
 
-chibicc: $(OBJS)
+gcc: $(OBJS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
+
+bad-gcc: CC=../../gcc
+bad-gcc: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(OBJS): chibicc.h
@@ -45,7 +48,7 @@ test-stage2: $(TESTS:test/%=stage2/test/%)
 # Misc.
 
 clean:
-	rm -rf chibicc tmp* $(TESTS) test/*.s test/*.exe stage2
+	rm -rf gcc chibicc tmp* $(TESTS) test/*.s test/*.exe stage2
 	find * -type f '(' -name '*~' -o -name '*.o' ')' -exec rm {} ';'
 
 .PHONY: test clean test-stage2

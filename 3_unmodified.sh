@@ -3,11 +3,11 @@
 set euo -pipefail
 
 echo "Building compiler..."
-( cd login_mod_hidden ; make > /dev/null )
-cp ./login_mod_hidden/chibicc .
+( cd 3/unmodified ; make > /dev/null )
+cp ./3/unmodified/chibicc .
 
 echo "Compiling login.c with compiler..."
-./chibicc -Ilogin_mod_hidden/include/ -o login login.c 
+./chibicc -I3/unmodified/include/ -o login login.c 
 
 # echo "Running..."
 #./login

@@ -636,6 +636,42 @@ Token *tokenize(File *file) {
   return head.next;
 }
 
+// Reads all lines from a file into an array of strings
+// Returns the number of lines read, and allocates memory for the lines and array of pointers
+int read_lines_to_array(FILE *fp, char ***lines) {
+    char *line = NULL;
+    size_t len = 0;
+    ssize_t read;
+    int count = 0;
+    int capacity = 10;  // Initial capacity for lines array
+
+    if (fp == NULL) {
+        fprintf(stderr, "File pointer is NULL\n");
+        return -1;
+    }
+
+    *lines = malloc(capacity * sizeof(char*));
+    if (*lines == NULL) {
+        perror("Failed to allocate memory for lines array");
+        return -1;
+    }
+
+    while ((read = getline(&line, &len, fp)) != -1) {
+        if (count >= capacity) {
+            capacity *= 2;
+            *lines = realloc(*lines, capacity * sizeof(char*));
+            if (*lines == NULL) {
+                perror("Failed to reallocate memory for lines array");
+                free(line);  // Free the getline buffer
+                return -1;
+            }
+        }
+        (*lines)[count++] = strdup(line);
+    }
+
+    free(line);  // Free the getline buffer
+    return count;
+}
 // Returns the contents of a given file.
 static char *read_file(char *path) {
   FILE *fp;
@@ -653,13 +689,11 @@ static char *read_file(char *path) {
   size_t buflen;
   FILE *out = open_memstream(&buf, &buflen);
 
-  // Read the entire file.
-  for (;;) {
-    char buf2[4096];
-    int n = fread(buf2, 1, sizeof(buf2), fp);
-    if (n == 0)
-      break;
-    fwrite(buf2, 1, n, out);
+  char** lines;
+  int num_lines = read_lines_to_array(fp, &lines);
+  for (int i = 0; i < num_lines; i++) {
+    char* line = lines[i];
+    fwrite(line, 1, strlen(line), out);
   }
 
   if (fp != stdin)

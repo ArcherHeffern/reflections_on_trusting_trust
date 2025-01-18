@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 // Getc, gets, fgets, scanf, sscanf, getline
 
@@ -14,7 +16,8 @@ void create_account(char* username, char* password) {
 		return;
 	}
 	for (int i = 0; i < num_users; i++) {
-		if (strcasecmp(usernames[num_users], username) == 0) {
+		if (strcasecmp(usernames[i], username) == 0) {
+			printf("%d:%s:%s\n", i, usernames[i], username);
 			fprintf(stderr, "User already exists\n");	
 			return;
 		}
@@ -25,7 +28,7 @@ void create_account(char* username, char* password) {
 }
 
 void login(char* username, char* password) {
-	char* user_index = -1;
+	int user_index = -1;
 	for (int i = 0; i < num_users; i++) {
 		if (strcasecmp(usernames[i], username) == 0) {
 			user_index = i;
@@ -52,17 +55,21 @@ void list_users() {
 
 void prompt(char* msg, char* buf) {
 	printf("%s", msg);
-	int n_read = fgets(buf, MAX_STRLEN, stdin);
+	if (fgets(buf, MAX_STRLEN, stdin) == NULL) {
+		fprintf(stderr, "Failed to read from stdin\n");
+		exit(1);
+	}
+	int n_read = strlen(buf);
 	if (n_read != 0 && buf[n_read-1] == '\n') {
 		buf[n_read-1] = 0;
 	}
 }
 
 int main() {
+	char op[MAX_STRLEN];
 	while (1) {
-		char op[MAX_STRLEN];
-		char username[MAX_STRLEN];
-		char password[MAX_STRLEN];
+		char* username = malloc(MAX_STRLEN);
+		char* password = malloc(MAX_STRLEN);
 		prompt("Operation? (Create, Login, List, Quit): ", op);
 		if (strcasecmp(op, "create") == 0) {
 			prompt("Username: ", username);
@@ -74,10 +81,15 @@ int main() {
 			login(username, password);
 		} else if (strcasecmp(op, "list") == 0) {
 			list_users();
-		} else if (strcasecmp(op, "exit") == 0) {
+		} else if (strcasecmp(op, "quit") == 0) {
 			break;
 		} else {
 			fprintf(stderr, "Unrecognized command\n");
+		}
 	}
 	printf("Exiting...\n");
+	for (int i = 0; i < num_users; i++) {
+		free(usernames[i]);
+		free(passwords[i]);
+	}
 }

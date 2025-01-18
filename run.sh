@@ -7,7 +7,7 @@ echo "Building compiler..."
 cp ./login_mod_hidden/chibicc .
 
 echo "Compiling login.c with compiler..."
-./chibicc -Ilogin_mod_hidden/include/ -o login login.c > /dev/null
+./chibicc -Ilogin_mod_hidden/include/ -o login login.c 
 
-echo "Running..."
-./login
+# echo "Running..."
+#./login

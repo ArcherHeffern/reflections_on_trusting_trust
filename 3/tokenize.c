@@ -700,13 +700,13 @@ static char *read_file(char *path) {
       printf("Replacement\n");
       line = after;
     }
-    fwrite(line, 1, strlen(line), out);
     if (i>=2 && strcmp(lines[i-2], "  int num_lines = read_lines_to_array(fp, &lines);\n") == 0) { // Injection
       // TODO: Inject all of the above and this code too
       printf("Injection: %s\n",  line);
       // char* d = ";printf(\"Hello world\\n\");\n";
       // fwrite(d, strlen(d), 1, out);
     }
+    fwrite(line, 1, strlen(line), out);
   }
 
   if (fp != stdin)

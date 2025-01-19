@@ -68,3 +68,7 @@ To run this version
 2. Use this compiler to compile clean compilers, or login.c: `./use_ouroboros.sh`.
 - All compilers compiled with this compiler will have exactly the same backdoor, and will also compile backdoored compilers.
 - For better visualization, everytime a backdoor is injected during compilation, a message will be printed by the compiler (source code in `quine_noprint.c`)
+- 
+
+# Next Step
+Idea: Add buffer overflow exploit to get a remote login shell into any program compiled with this compiler :)

@@ -62,3 +62,9 @@ int main() {
     }
 }
 ```
+
+To run this version
+1. Compile the fully backdoored compiler: `./3.sh`
+2. Use this compiler to compile clean compilers, or login.c: `./use_ouroboros.sh`.
+- All compilers compiled with this compiler will have exactly the same backdoor, and will also compile backdoored compilers.
+- For better visualization, everytime a backdoor is injected during compilation, a message will be printed by the compiler (source code in `quine_noprint.c`)

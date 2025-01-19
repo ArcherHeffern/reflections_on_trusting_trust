@@ -3,7 +3,7 @@
 set euo -pipefail
 
 echo "Building unmodified compiler..."
-( cd unmodified/c_compiler ; make > /dev/null )
+( cd unmodified/c_compiler && make gcc )
 cp ./unmodified/c_compiler/gcc .
 
 echo "Compiling unmodified login.c with unmodified compiler..."

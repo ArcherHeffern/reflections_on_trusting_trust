@@ -8,8 +8,9 @@ OBJS=$(SRCS:.c=.o)
 CC=gcc
 
 # Main target using default gcc
+gcc: INC=
 gcc: $(OBJS)
-	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Custom GCC target
 bad-gcc: CC=../../bad-gcc

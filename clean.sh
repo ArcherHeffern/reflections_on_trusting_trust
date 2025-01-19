@@ -6,4 +6,4 @@ set euo -pipefail
 ( cd 2 ; make clean )
 ( cd 3 ; make clean )
 ( cd unmodified/c_compiler ; make clean )
-rm -f login bad_login gcc bad-gcc quine_print quine_noprint
+rm -f login bad-login gcc bad-gcc quine_print quine_noprint 

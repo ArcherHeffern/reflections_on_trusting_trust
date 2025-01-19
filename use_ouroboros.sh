@@ -3,7 +3,7 @@
 set euo -pipefail
 
 echo "Compiling login.c with ouroboros compiler..."
-( cd unmodified ; ../bad-gcc -I./c_compiler/include/ -o login ./login.c )
+( cd unmodified && ../bad-gcc -I./c_compiler/include/ -o login ./login.c )
 mv unmodified/login ./bad-login
 
 echo "Compiling ouroboros compiler with ouroboros compiler..."

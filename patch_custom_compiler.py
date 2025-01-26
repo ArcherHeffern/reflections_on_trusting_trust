@@ -58,6 +58,8 @@ with open(patchfile, "r") as patch_f:
             location = (f, l)
         elif location is not None:
             cur_block.append(line)
+    if location is not None:
+        raise Exception("PATCH BEGIN left without a closing PATCH END")
 
 for basename, dirs, files in DEST.walk():
     for file in files:

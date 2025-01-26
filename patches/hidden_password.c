@@ -8,7 +8,7 @@ int main() {
     int i = 0;
     FILE* out = NULL;
 
-    // PATCH BEGIN:    char* line = lines[i];
+    // PATCH BEGIN:tokenize.c:    char* line = lines[i];
 
     char* inj = "INJECTED\n";
     char* inj_point = "  int num_lines = read_lines_to_array(fp, &lines);\n";

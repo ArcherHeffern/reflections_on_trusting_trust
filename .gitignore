@@ -3,4 +3,7 @@ chibicc
 gcc
 bad-gcc
 bad-login
-quine
+install_botnet_loaded*
+.vscode
+compiler_patched
+compiler

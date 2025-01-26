@@ -8,13 +8,13 @@ OBJS=$(SRCS:.c=.o)
 CC=gcc
 
 # Main target using default gcc
-gcc: INC=
-gcc: $(OBJS)
+compiler: INC=
+compiler: $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 # Custom GCC target
-bad-gcc: CC=../../bad-gcc
-bad-gcc: $(OBJS)
+bad-compiler: CC=../compiler
+bad-compiler: $(OBJS)
 	$(CC) $(CFLAGS) $(INC) -o $@ $^ $(LDFLAGS)
 
 # Pattern rule for object files

@@ -1,2 +1,0 @@
-// PATCH BEGIN
-// PATCH END
